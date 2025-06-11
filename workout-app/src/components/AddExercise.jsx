@@ -1,5 +1,4 @@
-// src/components/AddExercise.jsx
-import React, { useState } from 'react'; // Corrected import statement
+import React, { useState } from 'react';
 import { useFirebase } from '../contexts/FirebaseContext';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
@@ -8,8 +7,10 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
  * @param {object} props - Component props.
  * @param {function} props.onBack - Function to call when the user wants to go back.
  */
+
 function AddExercise({ onBack }) {
-    const { db, userId } = useFirebase(); // Get db instance and userId from context
+    // Destructure appId from useFirebase() hook
+    const { db, userId, appId } = useFirebase(); // <-- appId added here
     const [exerciseName, setExerciseName] = useState('');
     const [exerciseDescription, setExerciseDescription] = useState('');
     const [message, setMessage] = useState(''); // For success/error messages
@@ -33,6 +34,12 @@ function AddExercise({ onBack }) {
             setMessageType('error');
             return;
         }
+        if (!appId) { // Added this check for robustness, just in case appId is null
+            setMessage('App ID not available. Cannot save exercise.');
+            setMessageType('error');
+            return;
+        }
+
 
         setIsSaving(true); // Disable button during save
         setMessage(''); // Clear previous messages
@@ -41,9 +48,9 @@ function AddExercise({ onBack }) {
         try {
             // Reference to the 'exercises' collection for the current user
             // Path: artifacts/{appId}/users/{userId}/exercises
-            const exercisesCollectionRef = collection(db, `artifacts/${__app_id}/users/${userId}/exercises`);
+            // Use the destructured appId here instead of the global __app_id
+            const exercisesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exercises`); // <-- appId used here
 
-            // Add a new document to the collection
             await addDoc(exercisesCollectionRef, {
                 name: exerciseName.trim(),
                 description: exerciseDescription.trim(),

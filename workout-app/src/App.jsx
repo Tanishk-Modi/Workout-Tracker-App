@@ -1,9 +1,10 @@
-// src/App.jsx
 import React, { useState } from 'react';
-import { FirebaseProvider, useFirebase } from './contexts/FirebaseContext'; // Import the provider and hook
-import AddExercise from './components/AddExercise'; // We'll create this next
+import { FirebaseProvider, useFirebase } from './contexts/FirebaseContext';
+import AddExercise from './components/AddExercise';
+import LogWorkout from './components/LogWorkout';
+import WorkoutHistory from './components/WorkoutHistory';
 
-// Define different page states for simple routing
+// Page states for routing
 const PAGES = {
     HOME: 'home',
     ADD_EXERCISE: 'addExercise',
@@ -11,17 +12,16 @@ const PAGES = {
     WORKOUT_HISTORY: 'workoutHistory',
 };
 
-// Main App component
 function AppContent() {
-    // Get the userId from the FirebaseContext. This will be null initially until authenticated.
+    // Get userId from the FirebaseContext
     const { userId } = useFirebase();
-    const [currentPage, setCurrentPage] = useState(PAGES.HOME); // State to manage current page view
+    // State to manage current page view
+    const [currentPage, setCurrentPage] = useState(PAGES.HOME); 
 
-    // Helper to render the current page component based on `currentPage` state
+    // Render current page component based on `currentPage` state
     const renderPage = () => {
+
         if (!userId) {
-            // Display a message if userId is not yet available (should be handled by FirebaseProvider's loading state)
-            // This is a safety net, as FirebaseProvider should show "Loading..."
             return (
                 <div className="flex justify-center items-center h-screen text-xl font-semibold text-gray-300">
                     Authenticating user...
@@ -29,18 +29,19 @@ function AppContent() {
             );
         }
 
-        // Simple routing using switch/case
+        // Routing using switch/case
         switch (currentPage) {
+
             case PAGES.HOME:
                 return (
                     <div className="p-6 text-center">
-                        <h2 className="text-3xl font-bold text-gray-100 mb-6">Welcome to Your Workout Tracker!</h2>
+                        <h2 className="text-3xl font-bold text-gray-100 mb-6">Welcome to Your Workout Tracker! 🏋</h2>
                         <p className="text-gray-300 mb-8">
                             Start by adding some exercises, then log your workouts.
                         </p>
                         <div className="flex flex-col space-y-4 max-w-sm mx-auto">
                             <button
-                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                                className="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                                 onClick={() => setCurrentPage(PAGES.ADD_EXERCISE)}
                             >
                                 Add New Exercise
@@ -64,45 +65,22 @@ function AppContent() {
                         </div>
                     </div>
                 );
+
             case PAGES.ADD_EXERCISE:
                 return <AddExercise onBack={() => setCurrentPage(PAGES.HOME)} />;
             case PAGES.LOG_WORKOUT:
-                // Placeholder for future component
-                return (
-                    <div className="p-6">
-                        <h2 className="text-2xl font-bold text-gray-100 mb-4">Log a New Workout</h2>
-                        <p className="text-gray-300">This feature is coming soon!</p>
-                        <button
-                            className="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg"
-                            onClick={() => setCurrentPage(PAGES.HOME)}
-                        >
-                            Back to Home
-                        </button>
-                    </div>
-                );
+                return <LogWorkout onBack={() => setCurrentPage(PAGES.HOME)} />;
             case PAGES.WORKOUT_HISTORY:
-                // Placeholder for future component
-                return (
-                    <div className="p-6">
-                        <h2 className="text-2xl font-bold text-gray-100 mb-4">Workout History</h2>
-                        <p className="text-gray-300">This feature is coming soon!</p>
-                        <button
-                            className="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg"
-                            onClick={() => setCurrentPage(PAGES.HOME)}
-                        >
-                            Back to Home
-                        </button>
-                    </div>
-                );
+                return <WorkoutHistory onBack={() => setCurrentPage(PAGES.HOME)} />;
             default:
                 return null;
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-950 font-sans text-inter flex flex-col items-center py-8">
-            <h1 className="text-4xl font-extrabold text-indigo-400 mb-10">Workout Tracker</h1>
-            <div className="bg-gray-800 p-8 rounded-xl shadow-lg max-w-2xl w-full">
+        <div className="min-h-screen bg-gray-950 font-sans text-inter flex flex-col items-center py-8 px-8">
+            <h1 className="text-5xl p-8 font-extrabold text-indigo-400 mb-10 ">Gym Arena </h1>
+            <div className="bg-gray-800 p-8 rounded-xl max-w-2xl w-full shadow-[0px_0px_25px_10px_rgba(102,46,255,1)]">
                 {renderPage()}
             </div>
         </div>
