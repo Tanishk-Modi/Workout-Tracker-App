@@ -38,6 +38,7 @@ function AddExercise({ onBack }) {
             return;
         }
 
+
         setIsSaving(true); 
         setMessage(''); 
         setMessageType('');
