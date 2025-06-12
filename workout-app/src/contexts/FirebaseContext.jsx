@@ -1,15 +1,15 @@
-// src/contexts/FirebaseContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db, auth, app } from '../lib/firebase'; // Import initialized Firebase instances
-import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged
+import { db, auth, app } from '../lib/firebase'; 
+import { onAuthStateChanged } from 'firebase/auth'; 
 
-// Create a React Context for Firebase
+// React Context for Firebase
 const FirebaseContext = createContext(null);
 
 /**
  * Custom hook to easily access Firebase instances and user ID from the context.
  * @returns {{db: any, auth: any, userId: string | null, appId: string}} - Returns Firebase database, auth, current user ID, and app ID.
  */
+
 export const useFirebase = () => {
     const context = useContext(FirebaseContext);
     if (!context) {
@@ -22,6 +22,7 @@ export const useFirebase = () => {
  * FirebaseProvider component to provide Firebase instances and user ID to its children.
  * It manages the authentication state and ensures Firebase is ready before rendering children.
  */
+
 export const FirebaseProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
     const [loading, setLoading] = useState(true); // State to track if auth state is resolved

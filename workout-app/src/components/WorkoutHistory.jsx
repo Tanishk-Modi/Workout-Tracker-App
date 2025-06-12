@@ -8,70 +8,51 @@ import { collection, query, onSnapshot } from 'firebase/firestore';
  * @param {object} props - Component props.
  * @param {function} props.onBack - Function to call when the user wants to go back to the home page.
  */
-
 function WorkoutHistory({ onBack }) {
+    const { db, userId, appId } = useFirebase();
 
-    // Get db instance, userId, and appId from context
-    const { db, userId, appId } = useFirebase(); 
-
-    // State to store the fetched workout data
     const [workouts, setWorkouts] = useState([]);
-    // Manage loading status
     const [isLoading, setIsLoading] = useState(true);
-    // Store any fetch errors
     const [fetchError, setFetchError] = useState('');
-    // Control which workout's details are currently expanded
     const [expandedWorkoutId, setExpandedWorkoutId] = useState(null);
 
-    // Fetch workout data from Firestore in real-time
+    // --- EFFECT: Fetch workout data from Firestore in real-time ---
     useEffect(() => {
-        // Ensure userId and appId are available before attempting to fetch data
         if (!userId || !appId) {
             console.log("WorkoutHistory: Waiting for userId or appId to fetch workouts...");
-            // Set loading to false if authentication state is not ready (though FirebaseProvider handles this)
             if (!userId && !appId) setIsLoading(false);
             return;
         }
 
-        setIsLoading(true); // Set loading state to true when fetching begins
-        setFetchError('');  // Clear any previous errors
+        setIsLoading(true);
+        setFetchError('');
 
-        // Construct the Firestore collection reference for the current user's workouts
-        // Path: artifacts/{appId}/users/{userId}/workouts
         const workoutsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/workouts`);
-        const q = query(workoutsCollectionRef); // Create a query to listen to the collection
+        const q = query(workoutsCollectionRef);
 
-        // Set up a real-time listener using onSnapshot
-        // onSnapshot listens for changes in the collection and provides a new snapshot
         const unsubscribe = onSnapshot(q,
             (snapshot) => {
-                // Map over the documents in the snapshot to get their data and ID
                 const fetchedWorkouts = snapshot.docs.map(doc => ({
-                    id: doc.id, // Important: Include the document ID for React keys and expanded state
+                    id: doc.id,
                     ...doc.data(),
-                    // Convert Firestore Timestamp to JavaScript Date object for easier handling
                     date: doc.data().date ? doc.data().date.toDate() : null
                 }));
 
-                // Sort workouts by date in descending order (most recent first)
-                // This ensures the list is always ordered correctly regardless of Firestore's internal order
                 fetchedWorkouts.sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
 
-                setWorkouts(fetchedWorkouts); // Update the workouts state
-                setIsLoading(false);          // Set loading to false once data is fetched
+                setWorkouts(fetchedWorkouts);
+                setIsLoading(false);
                 console.log("WorkoutHistory: Fetched workouts:", fetchedWorkouts);
             },
             (error) => {
-                // Handle any errors that occur during the real-time fetch
                 console.error("Error fetching workout history:", error);
                 setFetchError('Failed to load workout history. Please try again.');
-                setIsLoading(false); // Set loading to false even on error
+                setIsLoading(false);
             }
         );
 
-        // Cleanup function: unsubscribe from the real-time listener when the component unmounts
         return () => unsubscribe();
-    }, [userId, appId, db]); // Dependencies: re-run effect if userId, appId, or db changes
+    }, [userId, appId, db]);
 
     /**
      * Toggles the expansion state of a workout item.
@@ -114,7 +95,6 @@ function WorkoutHistory({ onBack }) {
                                 <h3 className="text-lg font-semibold text-gray-100">
                                     Workout on {formatDate(workout.date)}
                                 </h3>
-                                {/* Simple arrow indicator for expanded state */}
                                 <span className="text-gray-400 text-xl">
                                     {expandedWorkoutId === workout.id ? '▲' : '▼'}
                                 </span>
@@ -129,7 +109,12 @@ function WorkoutHistory({ onBack }) {
                                             {workout.exercisesPerformed.map((exercise, idx) => (
                                                 <li key={idx} className="bg-gray-800 p-3 rounded-md shadow-sm">
                                                     <p className="font-semibold text-indigo-300">{exercise.exerciseName}</p>
-                                                    <p className="text-gray-300 text-sm">Sets: {exercise.sets} | Reps: {exercise.reps}</p>
+                                                    <p className="text-gray-300 text-sm">
+                                                        Sets: {exercise.sets} | Reps: {exercise.reps}
+                                                        {exercise.weight !== null && exercise.weight !== undefined && exercise.weight !== '' && ( // Check if weight exists and is not empty
+                                                            <span> | Weight: {exercise.weight}</span> // Display weight
+                                                        )}
+                                                    </p>
                                                     {exercise.notes && (
                                                         <p className="text-gray-400 text-xs mt-1 italic">Notes: {exercise.notes}</p>
                                                     )}

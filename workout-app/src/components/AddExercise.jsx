@@ -9,19 +9,17 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
  */
 
 function AddExercise({ onBack }) {
+
     // Destructure appId from useFirebase() hook
-    const { db, userId, appId } = useFirebase(); // <-- appId added here
+    const { db, userId, appId } = useFirebase(); 
     const [exerciseName, setExerciseName] = useState('');
     const [exerciseDescription, setExerciseDescription] = useState('');
     const [message, setMessage] = useState(''); // For success/error messages
     const [messageType, setMessageType] = useState(''); // 'success' or 'error'
-    const [isSaving, setIsSaving] = useState(false); // State to prevent multiple submissions
-
-    /**
-     * Handles the form submission to add a new exercise to Firestore.
-     * @param {Event} e - The form submission event.
-     */
+    const [isSaving, setIsSaving] = useState(false); // Prevent multiple submissions
+    
     const handleSubmit = async (e) => {
+
         e.preventDefault(); // Prevent default form submission behavior (page reload)
 
         if (!exerciseName.trim()) {
@@ -34,32 +32,31 @@ function AddExercise({ onBack }) {
             setMessageType('error');
             return;
         }
-        if (!appId) { // Added this check for robustness, just in case appId is null
+        if (!appId) { 
             setMessage('App ID not available. Cannot save exercise.');
             setMessageType('error');
             return;
         }
 
 
-        setIsSaving(true); // Disable button during save
-        setMessage(''); // Clear previous messages
+        setIsSaving(true); 
+        setMessage(''); 
         setMessageType('');
 
         try {
             // Reference to the 'exercises' collection for the current user
             // Path: artifacts/{appId}/users/{userId}/exercises
-            // Use the destructured appId here instead of the global __app_id
-            const exercisesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exercises`); // <-- appId used here
+            const exercisesCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/exercises`); 
 
             await addDoc(exercisesCollectionRef, {
                 name: exerciseName.trim(),
                 description: exerciseDescription.trim(),
-                createdAt: serverTimestamp(), // Firestore specific timestamp for creation
+                createdAt: serverTimestamp(), 
             });
 
             setMessage('Exercise added successfully!');
             setMessageType('success');
-            setExerciseName(''); // Clear form fields
+            setExerciseName(''); 
             setExerciseDescription('');
         } catch (error) {
             console.error("Error adding exercise: ", error);

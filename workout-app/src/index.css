@@ -1,2 +1,6 @@
 @import "tailwindcss";
 
+/* Custom CSS to style the date picker icon to be white */
+.date-picker-icon-white::-webkit-calendar-picker-indicator {
+    filter: invert(1); 
+}
