@@ -97,7 +97,7 @@ function AppContent() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-black from-70% to bg-red-900 font-sans text-inter flex flex-col items-center py-8 px-8">
+        <div className="min-h-screen bg-gradient-to-b from-black from-80% to bg-red-900 font-sans text-inter flex flex-col items-center py-8 px-8">
             <h1 className="text-5xl p-8 font-extrabold text-red-500 mb-10 "> ⚔️ Gym Arena ⚔️</h1>
             <div className="bg-gray-800 p-8 rounded-xl max-w-2xl w-full shadow-[0px_0px_25px_10px_rgba(250,16,16,1)]">
                 {renderPage()}

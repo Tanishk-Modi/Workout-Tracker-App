@@ -1,4 +1,3 @@
-// src/components/UtilitiesModal.jsx
 import React from 'react';
 
 function UtilitiesModal({ onClose, onNavigate }) {

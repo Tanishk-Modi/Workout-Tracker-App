@@ -13,12 +13,6 @@
       appId: import.meta.env.VITE_APP_FIREBASE_APP_ID,
     };
 
-    // --- TEMPORARY DEBUG LOG ---
-    // This will help you verify that the correct config values are being loaded.
-    // REMOVE THIS LINE AFTER YOU CONFIRM IT'S WORKING!
-    console.log("Firebase Config loaded in firebase.js:", firebaseConfig);
-    // --- END TEMPORARY DEBUG LOG ---
-
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
