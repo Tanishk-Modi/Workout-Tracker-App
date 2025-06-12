@@ -38,31 +38,31 @@ function AppContent() {
             case PAGES.HOME:
                 return (
                     <div className="p-6 text-center">
-                        <h2 className="text-3xl font-bold text-gray-100 mb-6">Welcome to Your Workout Tracker! 🏋</h2>
+                        <h2 className="text-3xl font-bold text-red-500 mb-6">Welcome to Your Workout Tracker! 🏋</h2>
                         <p className="text-gray-300 mb-8">
                             Start by adding some exercises, then log your workouts.
                         </p>
                         <div className="flex flex-col space-y-4 max-w-sm mx-auto">
                             <button
-                                className="bg-gray-900 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                                className="bg-gray-900 hover:bg-red-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                                 onClick={() => setCurrentPage(PAGES.ADD_EXERCISE)}
                             >
                                 Add New Exercise
                             </button>
                             <button
-                                className="bg-gray-900 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                                className="bg-gray-900 hover:bg-red-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                                 onClick={() => setCurrentPage(PAGES.LOG_WORKOUT)}
                             >
                                 Log New Workout
                             </button>
                             <button
-                                className="bg-gray-900 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                                className="bg-gray-900 hover:bg-red-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                                 onClick={() => setCurrentPage(PAGES.WORKOUT_HISTORY)}
                             >
                                 View Workout History
                             </button>
                             <button
-                                className="bg-gray-900 hover:bg-indigo-800 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                                className="bg-gray-900 hover:bg-red-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                                 onClick={() => setCurrentPage(PAGES.
                                 EXERCISE_LIST)}
                             >
