@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db, auth, app } from '../lib/firebase'; 
-import { onAuthStateChanged } from 'firebase/auth'; 
+import { db, auth, app } from '../lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore'; 
 
-// React Context for Firebase
 const FirebaseContext = createContext(null);
 
 /**
- * Custom hook to easily access Firebase instances and user ID from the context.
- * @returns {{db: any, auth: any, userId: string | null, appId: string}} - Returns Firebase database, auth, current user ID, and app ID.
+ * Custom hook to easily access Firebase instances, user ID, app ID, and username from the context.
  */
 
 export const useFirebase = () => {
@@ -19,41 +18,66 @@ export const useFirebase = () => {
 };
 
 /**
- * FirebaseProvider component to provide Firebase instances and user ID to its children.
+ * FirebaseProvider component to provide Firebase instances, user ID, app ID, and username to its children.
  * It manages the authentication state and ensures Firebase is ready before rendering children.
  */
 
 export const FirebaseProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
-    const [loading, setLoading] = useState(true); // State to track if auth state is resolved
+    const [username, setUsername] = useState(null); // New state for the user's custom username
+    const [loading, setLoading] = useState(true);
 
-    // Access __app_id. Use a default if not defined (e.g., for local development)
-    // The typeof check prevents ReferenceError when __app_id is truly not defined globally
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-workout-app';
-    console.log("FirebaseProvider: Using app ID:", appId); // Debugging line
+    console.log("FirebaseProvider: Using app ID:", appId);
 
     useEffect(() => {
         // Listener for Firebase Authentication state changes
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => { // Made async to await Firestore fetch
             if (user) {
                 setUserId(user.uid);
-                console.log("FirebaseProvider: User is signed in with UID:", user.uid);
+                console.log("FirebaseProvider: User signed in with UID:", user.uid);
+
+                // --- Fetch user profile to get username ---
+                if (db && appId) { 
+                    try {
+                        const profileDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/profile`, 'info'); // Using 'info' as fixed doc ID
+                        const profileSnap = await getDoc(profileDocRef);
+
+                        if (profileSnap.exists()) {
+                            const userData = profileSnap.data();
+                            if (userData.username) {
+                                setUsername(userData.username);
+                                console.log("FirebaseProvider: Loaded username:", userData.username);
+                            } else {
+                                setUsername(null); // Explicitly null if no username field
+                                console.log("FirebaseProvider: User profile exists, but no username found.");
+                            }
+                        } else {
+                            setUsername(null); // User profile document doesn't exist yet
+                            console.log("FirebaseProvider: User profile document does not exist for UID:", user.uid);
+                        }
+                    } catch (error) {
+                        console.error("FirebaseProvider: Error fetching user profile:", error);
+                        setUsername(null); // Ensure username is null on error
+                    }
+                }
+
             } else {
                 setUserId(null);
+                setUsername(null); // Clear username if user signs out
                 console.log("FirebaseProvider: User is signed out.");
             }
-            setLoading(false); // Authentication state has been determined
+            setLoading(false); // Authentication and initial profile check complete
         });
 
-        // Cleanup function: unsubscribe from the listener when the component unmounts
+        // Cleanup function
         return () => unsubscribe();
-    }, []); // Empty dependency array means this effect runs once on mount
+    }, [db, appId]); 
 
-    // Provide the Firebase instances, userId, and appId to all children components
     return (
-        <FirebaseContext.Provider value={{ db, auth, userId, appId }}>
+        <FirebaseContext.Provider value={{ db, auth, userId, appId, username, setUsername }}> 
             {loading ? (
-                <div className="flex justify-center items-center h-screen text-xl font-semibold text-gray-700">
+                <div className="flex justify-center items-center h-screen text-xl font-semibold text-red-600 bg-black">
                     Loading authentication...
                 </div>
             ) : (
