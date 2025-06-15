@@ -4,3 +4,27 @@
 .date-picker-icon-white::-webkit-calendar-picker-indicator {
     filter: invert(1); 
 }
+
+/* @keyframes for AI blurb text */
+@keyframes fade-in-right-then-left {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+.animate-fade-in-right-then-left {
+  animation: fade-in-right-then-left 12s ease-in-out infinite; 
+}
