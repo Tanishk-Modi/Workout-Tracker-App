@@ -9,6 +9,7 @@ import ExerciseList from './components/ExerciseList';
 import UtilitiesModal from './components/UtilitiesModal';
 import PersonalStatistics from './components/PersonalStatistics';
 import SetUsername from './components/SetUsername'; 
+import Assistant from './components/Assistant';
 
 
 // Page states for routing
@@ -20,6 +21,7 @@ const PAGES = {
     EXERCISE_LIST: 'exerciseList',
     PERSONAL_STATS: 'personalStats',
     SET_USERNAME: 'setUsername', 
+    ASSISTANT: 'assistant',
 };
 
 function AppContent() {
@@ -105,13 +107,15 @@ function AppContent() {
                 return <ExerciseList onBack={() => setCurrentPage(PAGES.HOME)} />;
             case PAGES.SET_USERNAME: 
                  return <SetUsername onBack={() => setCurrentPage(PAGES.HOME)} />; 
+            case PAGES.ASSISTANT: 
+                return <Assistant onBack={() => setCurrentPage(PAGES.HOME)} />;
             default:
                 return null;
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-black from-80% to-red-900 font-sans text-inter flex flex-col items-center py-8 px-8"> 
+        <div className="min-h-screen bg-black font-sans text-inter flex flex-col items-center py-8 px-8 relative overflow-hidden"> 
             <h1 className="text-5xl p-8 font-extrabold text-red-500 mb-10 "> ⚔️ Gym Arena ⚔️</h1>
             <div className="bg-gray-800 p-8 rounded-xl max-w-2xl w-full shadow-[0px_0px_25px_10px_rgba(250,16,16,1)]">
                 {renderPage()}
@@ -125,6 +129,26 @@ function AppContent() {
                 />
             )}
             </div>
+
+            {currentPage === PAGES.HOME && ( 
+                <div className="fixed bottom-8 right-8 z-50 flex items-end justify-end">
+                    {/* Stylish Arrow and Text */}
+                    <div className="relative mr-4 mb-2 p-2 rounded-lg bg-red-500 text-white shadow-lg pointer-events-none opacity-0 animate-fade-in-right-then-left">
+                        <p className="text-sm font-semibold whitespace-nowrap">Click for AI Assistance</p>
+                        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-full w-0 h-0 border-t-[8px] border-b-[8px] border-l-[8px] border-t-transparent border-b-transparent border-l-red-500"></div>
+                    </div>
+
+                    {/* Circular AI Assistant Button */}
+                    <button
+                        className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-700 flex items-center justify-center text-white text-3xl font-bold shadow-lg transform hover:scale-110 transition duration-300 ease-in-out cursor-pointer"
+                        onClick={() => setCurrentPage(PAGES.ASSISTANT)}
+                        title="AI Fitness Assistant"
+                    >
+                        🧠
+                    </button>
+                </div>
+            )}
+
         </div>
     );
 }
