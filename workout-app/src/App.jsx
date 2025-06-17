@@ -12,7 +12,7 @@ import SetUsername from './components/SetUsername';
 import Assistant from './components/Assistant';
 
 
-// Page states for routing
+// Page states for simple routing 
 const PAGES = {
     HOME: 'home',
     ADD_EXERCISE: 'addExercise',
